@@ -1,0 +1,205 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>TV Display</title>
+    <style>
+        :root {
+            --bg: #0b0b0b;
+            --card: #111;
+            --accent: #00e5ff;
+            --text: #fff;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+        }
+
+        header {
+            padding: 14px;
+            text-align: center;
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 20px;
+        }
+
+        .spots-container {
+            width: 95vw;
+            max-width: 1400px;
+            margin: 16px auto;
+            display: grid;
+            grid-template-columns: repeat(6, 200px);
+            grid-auto-rows: 100px;
+            gap: 16px;
+            justify-content: center;
+        }
+
+        .spot {
+            background: var(--card);
+            border-radius: 10px;
+            border: 2px solid rgba(255,255,255,0.04);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+            .spot.active {
+                border-color: var(--accent);
+                background: rgba(0, 229, 255, 0.1);
+                transform: scale(1.05);
+                box-shadow: 0 0 10px var(--accent);
+            }
+
+        .spot-text {
+            font-weight: 700;
+            text-align: center;
+            padding: 0 8px;
+            font-size: 14px;
+            transition: font-size 0.3s ease, color 0.3s ease;
+        }
+
+        .spot.active .spot-text {
+            font-size: 18px;
+            color: #00e5ff;
+        }
+
+        .countdown {
+            position: absolute;
+            top: 6px;
+            right: 8px;
+            font-size: 12px;
+            color: yellow;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>TV Display (Live)</h1>
+    </header>
+
+    <main>
+        <div class="spots-container" id="spotsContainer"></div>
+    </main>
+
+    <script>
+        const SPOT_COUNT = 36;
+        const spotsContainer = document.getElementById('spotsContainer');
+        let active = {}; // active[spotIndex] = { id, remaining, intervalId, timeoutId }
+
+        // Initialize grid
+        for (let i = 0; i < SPOT_COUNT; i++) {
+            const el = document.createElement('div');
+            el.className = 'spot';
+            el.innerHTML = `
+                    <div class="spot-text">Spot ${i + 1}</div>
+                    <div class="countdown"></div>
+                `;
+            spotsContainer.appendChild(el);
+        }
+
+        // Clear active timers for a spot
+        function clearActive(spotIndex) {
+            const a = active[spotIndex];
+            if (!a) return;
+            if (a.intervalId) clearInterval(a.intervalId);
+            if (a.timeoutId) clearTimeout(a.timeoutId);
+            delete active[spotIndex];
+            const el = spotsContainer.children[spotIndex];
+            if (el) {
+                el.querySelector('.countdown').textContent = '';
+                el.classList.remove('active'); // remove highlight
+            }
+        }
+
+        // Start showing a message locally
+        function startLocalShow(spotIndex, message) {
+            clearActive(spotIndex);
+            const el = spotsContainer.children[spotIndex];
+            const textNode = el.querySelector('.spot-text');
+            const cdNode = el.querySelector('.countdown');
+
+            // Add highlight
+            el.classList.add('active');
+
+            textNode.innerText = message.text;
+
+            let remaining = Number(message.duration) || 10;
+            cdNode.innerText = remaining + 's';
+
+            const intervalId = setInterval(() => {
+                remaining--;
+                cdNode.innerText = remaining > 0 ? remaining + 's' : '0s';
+            }, 1000);
+
+            const timeoutId = setTimeout(async () => {
+                try {
+                    await fetch(`/queue/${message.id}/completed`, { method: 'POST' });
+                } catch (e) { console.error(e); }
+                finally {
+                    clearActive(spotIndex);
+                    await pollAndStartForSpot(spotIndex);
+                }
+            }, remaining * 1000);
+
+            active[spotIndex] = { id: message.id, remaining, intervalId, timeoutId };
+        }
+
+        // Pick server message for a spot and start showing
+        async function pollAndStartForSpot(spotIndex, qArg) {
+            const q = qArg || await (await fetch('/queue')).json();
+
+            const showing = q.find(it => it.spotIndex === spotIndex && it.status === 'showing');
+            if (showing) {
+                startLocalShow(spotIndex, showing);
+                return;
+            }
+
+            const approved = q.find(it => it.spotIndex === spotIndex && it.status === 'approved');
+            if (approved) {
+                const p = await fetch(`/queue/${approved.id}/showing`, { method: 'POST' });
+                if (p.ok) {
+                    const refreshed = (await (await fetch('/queue')).json()).find(it => it.id === approved.id) || approved;
+                    startLocalShow(spotIndex, refreshed);
+                }
+                return;
+            }
+
+            // No message -> reset spot display
+            const el = spotsContainer.children[spotIndex];
+            el.classList.remove('active');
+            el.querySelector('.spot-text').innerText = `Spot ${spotIndex + 1}`;
+            el.querySelector('.countdown').innerText = '';
+        }
+
+        // Poll server for all spots
+        async function pollQueue() {
+            const q = await (await fetch('/queue')).json();
+            for (let i = 0; i < SPOT_COUNT; i++) {
+                if (active[i]) {
+                    const a = active[i];
+                    const serverItem = q.find(it => it.id === a.id);
+                    if (!serverItem || serverItem.status === 'completed') clearActive(i);
+                    else continue;
+                }
+                await pollAndStartForSpot(i, q);
+            }
+        }
+
+        // Start polling
+        setInterval(pollQueue, 2000);
+        pollQueue();
+    </script>
+
+</body>
+</html>

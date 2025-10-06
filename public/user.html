@@ -1,0 +1,281 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>User — Reserve Spot</title>
+    <style>
+        :root {
+            --bg: #111;
+            --card: #222;
+            --accent: cyan;
+            --pending: orange;
+            --approved: #2e7d32;
+            --showing: #0288d1;
+            --declined: #b00020;
+            --text: #fff;
+        }
+
+        body {
+            margin: 0;
+            font-family: Inter, Arial, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        header {
+            padding: 18px 0;
+            text-align: center;
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 24px;
+        }
+
+        .spots-container {
+            width: 95vw;
+            max-width: 1400px;
+            display: grid;
+            grid-template-columns: repeat(6, 200px);
+            grid-auto-rows: 100px;
+            gap: 16px;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .spot {
+            width: 200px;
+            height: 100px;
+            border-radius: 10px;
+            border: 2px solid rgba(255,255,255,0.06);
+            background: #333;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            cursor: pointer;
+            transition: transform .12s ease, background .12s ease;
+            position: relative;
+        }
+
+            .spot:hover {
+                transform: translateY(-4px);
+            }
+
+        .spot-number {
+            font-weight: 700;
+            font-size: 16px;
+            margin-bottom: 4px;
+        }
+
+        .spot-meta {
+            font-size: 12px;
+            opacity: 0.9;
+        }
+
+        .badge {
+            position: absolute;
+            top: 6px;
+            left: 6px;
+            font-size: 11px;
+            padding: 3px 6px;
+            border-radius: 6px;
+            background: rgba(0,0,0,0.25);
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.65);
+            z-index: 30;
+            align-items: center;
+            justify-content: center;
+        }
+
+            .modal.show {
+                display: flex;
+            }
+
+        .modal-box {
+            width: 380px;
+            background: var(--card);
+            border-radius: 10px;
+            padding: 18px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.6);
+        }
+
+            .modal-box h2 {
+                margin: 0 0 8px 0;
+                font-size: 18px;
+            }
+
+        .modal-row {
+            margin-top: 10px;
+        }
+
+            .modal-row label {
+                display: block;
+                font-size: 13px;
+                margin-bottom: 6px;
+                color: #ddd;
+            }
+
+            .modal-row input[type="text"], .modal-row select {
+                width: 100%;
+                padding: 8px 10px;
+                border-radius: 6px;
+                border: none;
+                background: #111;
+                color: #fff;
+            }
+
+        .btn {
+            margin-top: 12px;
+            padding: 8px 12px;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            background: var(--accent);
+            color: #000;
+            font-weight: 700;
+        }
+
+            .btn.secondary {
+                background: #555;
+                color: #fff;
+                margin-left: 8px;
+            }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Alege un loc — Rezervă-ți mesajul</h1>
+        <div style="font-size:13px;opacity:0.9;">Sunt permise mai multe rezervări pe același loc. Mesajele vor fi afișate în ordine.</div>
+    </header>
+
+
+    <main>
+        <div class="spots-container" id="spotsContainer"></div>
+    </main>
+
+    <!-- Modal -->
+    <div id="modal" class="modal">
+        <div class="modal-box">
+            <h2>Reserve Spot <span id="modalSpotNumber"></span></h2>
+            <div class="modal-row">
+                <label for="msg">Message</label>
+                <input id="msg" type="text" placeholder="Enter text">
+            </div>
+            <div class="modal-row">
+                <label for="duration">Duration</label>
+                <select id="duration">
+                    <option value="10">10 seconds — $5</option>
+                    <option value="30">30 seconds — $10</option>
+                </select>
+            </div>
+            <div style="margin-top:12px;">
+                <button id="payBtn" class="btn">Pay & Submit (simulated)</button>
+                <button id="cancelBtn" class="btn secondary">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const spotsContainer = document.getElementById('spotsContainer');
+        const modal = document.getElementById('modal');
+        const modalSpotNumber = document.getElementById('modalSpotNumber');
+        const msgInput = document.getElementById('msg');
+        const durationSelect = document.getElementById('duration');
+        const payBtn = document.getElementById('payBtn');
+        const cancelBtn = document.getElementById('cancelBtn');
+
+        const SPOT_COUNT = 36;
+        let selectedSpot = null;
+
+        function createGrid() {
+            for (let i = 0; i < SPOT_COUNT; i++) {
+                const el = document.createElement('div');
+                el.className = 'spot';
+                el.dataset.index = i;
+                el.innerHTML = `<div class="badge"></div>
+              <div class="spot-number">Spot ${i + 1}</div>
+              <div class="spot-meta">Disponibil</div>`;
+                el.addEventListener('click', () => openModal(i));
+                spotsContainer.appendChild(el);
+            }
+        }
+
+        function computeSpotInfo(spotIndex, queue) {
+            const items = queue.filter(it => it.spotIndex === spotIndex && it.status !== 'completed');
+            if (!items.length) return { status: 'available', count: 0 };
+
+            const showing = items.find(it => it.status === 'showing');
+            if (showing) return { status: 'showing', count: items.length, text: showing.text, duration: showing.duration };
+            const approved = items.find(it => it.status === 'approved');
+            if (approved) return { status: 'approved', count: items.length, text: approved.text };
+            const pending = items.find(it => it.status === 'pending');
+            if (pending) return { status: 'pending', count: items.length };
+            return { status: 'declined', count: items.length };
+        }
+
+        async function refreshSpots() {
+            try {
+                const res = await fetch('/queue');
+                const queue = await res.json();
+                for (let i = 0; i < SPOT_COUNT; i++) {
+                    const el = spotsContainer.children[i];
+                    const meta = el.querySelector('.spot-meta');
+                    const badge = el.querySelector('.badge');
+                    const info = computeSpotInfo(i, queue);
+
+                    el.className = 'spot ' + info.status;
+                    if (info.status === 'available') {
+                        meta.textContent = 'Disponibil';
+                        badge.textContent = '';
+                    } else {
+                        meta.textContent = `${info.status} (${info.count} in queue)`;
+                        badge.textContent = info.count;
+                    }
+                }
+            } catch (e) { console.error(e); }
+        }
+
+        function openModal(i) {
+            selectedSpot = i;
+            modalSpotNumber.textContent = `#${i + 1}`;
+            msgInput.value = '';
+            durationSelect.value = '10';
+            modal.classList.add('show');
+        }
+        function closeModal() { modal.classList.remove('show'); selectedSpot = null; }
+
+        payBtn.addEventListener('click', async () => {
+            const text = msgInput.value.trim();
+            const duration = parseInt(durationSelect.value, 10);
+            if (!text) return alert('Please enter a message');
+            try {
+                await fetch('/queue', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ spotIndex: selectedSpot, text, duration })
+                });
+                closeModal();
+                refreshSpots();
+            } catch (e) { console.error(e); alert('Submit failed'); }
+        });
+        cancelBtn.addEventListener('click', closeModal);
+
+        createGrid();
+        refreshSpots();
+        setInterval(refreshSpots, 2000);
+    </script>
+</body>
+</html>
