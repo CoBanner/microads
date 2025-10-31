@@ -23,7 +23,10 @@ app.post('/queue', (req, res) => {
     const { spotIndex, text, duration, special, textColor } = req.body;
 
     const ALLOWED_DURATIONS = [10, 30, 60];  // allowed display durations in seconds
-    const MAX_MESSAGE_LENGTH = 200;          // max characters
+    const MAX_MESSAGE_LENGTH = 40; // limit to 50 chars (you can increase slightly if desired)
+    if (text.length === 0 || text.length > MAX_MESSAGE_LENGTH) {
+        return res.status(400).json({ error: `Message length must be 1–${MAX_MESSAGE_LENGTH} characters` });
+    }
     const ALLOWED_SPECIAL_FLAGS = [true, false];
     const ALLOWED_COLORS = [
         '#000000', // black
