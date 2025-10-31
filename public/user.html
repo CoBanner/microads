@@ -5,21 +5,10 @@
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <title>User — Reserve Spot</title>
     <style>
-        :root {
-            --bg: #111;
-            --card: #222;
-            --accent: cyan;
-            --pending: orange;
-            --approved: #2e7d32;
-            --showing: #0288d1;
-            --declined: #b00020;
-            --text: #fff;
-        }
-
         body {
             margin: 0;
             font-family: Inter, Arial, sans-serif;
-            color: var(--text);
+            color: #000;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -38,21 +27,21 @@
         }
 
         .spots-container {
-           width: 95vw;
-           max-width: 1400px;
-           display: grid;
-           grid-template-columns: repeat(3, 300px);
-           grid-auto-rows: 150px;
-           gap: 16px;
-           justify-content: center;
-           padding: 20px;
+            width: 95vw;
+            max-width: 1400px;
+            display: grid;
+            grid-template-columns: repeat(3, 300px);
+            grid-auto-rows: 150px;
+            gap: 16px;
+            justify-content: center;
+            padding: 20px;
         }
 
         .spot {
             width: 300px;
             height: 150px;
             border-radius: 10px;
-            border: 2px solid rgba(255,255,255,0.06);
+            border: 2px solid rgba(255,255,255,0.2);
             background: #f7f7f7;
             display: flex;
             flex-direction: column;
@@ -89,6 +78,7 @@
             padding: 3px 6px;
             border-radius: 6px;
             background: rgba(0,0,0,0.25);
+            color: #fff;
         }
 
         /* Modal */
@@ -111,7 +101,7 @@
             background: #fff;
             border-radius: 10px;
             padding: 18px;
-            box-shadow: 0 8px 30px rgba(0,0,0,0.6);
+            box-shadow: 0 8px 30px rgba(0,0,0,0.4);
         }
 
             .modal-box h2 {
@@ -128,14 +118,13 @@
                 display: block;
                 font-size: 13px;
                 margin-bottom: 6px;
-                color: #000000;
+                color: #000;
             }
 
             .modal-row input[type="text"], .modal-row select {
                 width: 80%;
                 padding: 8px 10px;
                 border-radius: 6px;
-                border: none;
                 border: 2px solid #ff8209;
                 color: #000;
             }
@@ -147,7 +136,7 @@
             border: none;
             cursor: pointer;
             background: #e87200;
-            color: #ffffff;
+            color: #fff;
             font-weight: 700;
         }
 
@@ -157,32 +146,53 @@
                 margin-left: 8px;
             }
 
+        /* Color palette */
+        .color-palette {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
 
-             @media (max-width: 1024px) {
+        .color-swatch {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            border: 2px solid #ccc;
+            cursor: pointer;
+            transition: transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+        }
+
+            .color-swatch:hover {
+                transform: scale(1.1);
+            }
+
+            .color-swatch.selected {
+                border-color: #ff8209;
+                box-shadow: 0 0 6px #ff8209;
+            }
+
+        @media (max-width: 1024px) {
             .spots-container {
                 grid-template-columns: repeat(2, 1fr);
                 grid-auto-rows: 150px;
             }
+
             .spot {
                 width: 100%;
             }
         }
 
         @media (max-width: 768px) {
-            h1 {
-                font-size: 20px;
-            }
-            header div {
-                font-size: 12px;
-            }
             .spots-container {
                 grid-template-columns: repeat(2, 1fr);
                 gap: 12px;
                 padding: 10px;
             }
+
             .spot {
                 height: 130px;
             }
+
             .modal-box {
                 width: 90%;
                 max-width: 320px;
@@ -195,32 +205,25 @@
                 grid-template-columns: 1fr;
                 gap: 10px;
             }
+
             .spot {
                 width: 100%;
                 height: 130px;
-                font-size: 14px;
             }
-            h1 {
-                font-size: 18px;
-            }
+
             .modal-box {
                 width: 90%;
                 padding: 12px;
             }
+
             .btn {
                 width: 100%;
                 margin-top: 10px;
             }
-            .btn.secondary {
-                margin-left: 0;
-            }
-            .spots-container {
-                width: 75vw;
-            }
-            header {
-    padding-left: 15px;
-    padding-right: 15px;
-}
+
+                .btn.secondary {
+                    margin-left: 0;
+                }
         }
     </style>
 </head>
@@ -229,7 +232,6 @@
         <h1>Alege un loc — Rezervă-ți mesajul</h1>
         <div style="font-size:16px;opacity:0.9;">Sunt permise mai multe rezervări pe același loc. Mesajele vor fi afișate în ordine.</div>
     </header>
-
 
     <main>
         <div class="spots-container" id="spotsContainer"></div>
@@ -241,11 +243,19 @@
             <h2>Rezervă locul <span id="modalSpotNumber"></span></h2>
             <div class="modal-row">
                 <label for="msg">Mesaj</label>
-                <input id="msg" type="text" placeholder="Scrieți textul dorit">
+                <input id="msg" type="text" placeholder="Scrieți textul dorit" maxlength="50">
             </div>
             <div class="modal-row">
-                <label for="textColor">Culoare text:</label>
-                <input type="color" id="textColor" name="textColor" value="#000000">
+                <label>Culoare text:</label>
+                <div id="colorPalette" class="color-palette">
+                    <div class="color-swatch selected" data-color="#000000" style="background:#000000"></div>
+                    <div class="color-swatch" data-color="#ff0000" style="background:#ff0000"></div>
+                    <div class="color-swatch" data-color="#00ff00" style="background:#00ff00"></div>
+                    <div class="color-swatch" data-color="#0000ff" style="background:#0000ff"></div>
+                    <div class="color-swatch" data-color="#ffcc00" style="background:#ffcc00"></div>
+                    <div class="color-swatch" data-color="#ff00ff" style="background:#ff00ff"></div>
+                </div>
+                <input type="hidden" id="textColor" value="#000000">
             </div>
             <div class="modal-row">
                 <label for="duration">Durată</label>
@@ -261,7 +271,6 @@
         </div>
     </div>
 
-
     <script>
         const spotsContainer = document.getElementById('spotsContainer');
         const modal = document.getElementById('modal');
@@ -270,6 +279,8 @@
         const durationSelect = document.getElementById('duration');
         const payBtn = document.getElementById('payBtn');
         const cancelBtn = document.getElementById('cancelBtn');
+        const colorPalette = document.getElementById('colorPalette');
+        const colorHiddenInput = document.getElementById('textColor');
 
         const SPOT_COUNT = 9;
         let selectedSpot = null;
@@ -280,8 +291,8 @@
                 el.className = 'spot';
                 el.dataset.index = i;
                 el.innerHTML = `<div class="badge"></div>
-                  <div class="spot-number">Spot ${i + 1}</div>
-                  <div class="spot-meta">Disponibil</div>`;
+                      <div class="spot-number">Spot ${i + 1}</div>
+                      <div class="spot-meta">Disponibil</div>`;
                 el.addEventListener('click', () => openModal(i));
                 spotsContainer.appendChild(el);
             }
@@ -292,9 +303,9 @@
             if (!items.length) return { status: 'available', count: 0 };
 
             const showing = items.find(it => it.status === 'showing');
-            if (showing) return { status: 'showing', count: items.length, text: showing.text, duration: showing.duration };
+            if (showing) return { status: 'showing', count: items.length };
             const approved = items.find(it => it.status === 'approved');
-            if (approved) return { status: 'approved', count: items.length, text: approved.text };
+            if (approved) return { status: 'approved', count: items.length };
             const pending = items.find(it => it.status === 'pending');
             if (pending) return { status: 'pending', count: items.length };
             return { status: 'declined', count: items.length };
@@ -315,7 +326,7 @@
                         meta.textContent = 'Disponibil';
                         badge.textContent = '';
                     } else {
-                        meta.textContent = `${info.status} (${info.count} in queue)`;
+                        meta.textContent = `${info.status} (${info.count} în coadă)`;
                         badge.textContent = info.count;
                     }
                 }
@@ -329,22 +340,39 @@
             durationSelect.value = '10';
             modal.classList.add('show');
         }
-        function closeModal() { modal.classList.remove('show'); selectedSpot = null; }
+
+        function closeModal() {
+            modal.classList.remove('show');
+            selectedSpot = null;
+        }
+
+        colorPalette.addEventListener('click', e => {
+            if (e.target.classList.contains('color-swatch')) {
+                document.querySelectorAll('.color-swatch').forEach(s => s.classList.remove('selected'));
+                e.target.classList.add('selected');
+                colorHiddenInput.value = e.target.dataset.color;
+            }
+        });
 
         payBtn.addEventListener('click', async () => {
             const text = msgInput.value.trim();
             const duration = parseInt(durationSelect.value, 10);
-            if (!text) return alert('Please enter a message');
+            const textColor = colorHiddenInput.value;
+            if (!text) return alert('Introduceți un mesaj');
             try {
                 await fetch('/queue', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ spotIndex: selectedSpot, text, duration })
+                    body: JSON.stringify({ spotIndex: selectedSpot, text, duration, textColor })
                 });
                 closeModal();
                 refreshSpots();
-            } catch (e) { console.error(e); alert('Submit failed'); }
+            } catch (e) {
+                console.error(e);
+                alert('Trimiterea a eșuat');
+            }
         });
+
         cancelBtn.addEventListener('click', closeModal);
 
         createGrid();

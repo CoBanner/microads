@@ -9,37 +9,19 @@
             --bg-start: #e0e0e0;
             --bg-mid: #f9f9f9;
             --bg-end: #d0d0d0;
-            --card-inactive: rgba(200, 200, 200, 0.1); /* very subtle gray */
-            --card-active: rgba(0, 122, 204, 0.2); /* blueish highlight */
+            --card-inactive: rgba(200, 200, 200, 0.1);
+            --card-active: rgba(0, 122, 204, 0.2);
             --accent: #007acc;
             --text: #111;
         }
 
- 
         body {
             margin: 0;
             font-family: Arial, sans-serif;
             color: var(--text);
             overflow: hidden;
             height: 100vh;
-            /* Full-height background image */
             background: url('lebg.jpg') center center / cover no-repeat;
-            /* Optional gradient overlay on top */
-            /* background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(200,200,200,0.1)), url('lebg.jpg') center center / cover no-repeat; */
-        }
-
-        @keyframes gradientBG {
-            0% {
-                background-position: 0% 50%;
-            }
-
-            50% {
-                background-position: 100% 50%;
-            }
-
-            100% {
-                background-position: 0% 50%;
-            }
         }
 
         header {
@@ -65,7 +47,7 @@
 
         .spot {
             border: 1px solid rgba(0, 0, 0, 0.1);
-            background: var(--card-inactive); /* subtle gray for inactive */
+            background: var(--card-inactive);
             border-radius: 15px;
             display: flex;
             align-items: center;
@@ -73,17 +55,16 @@
             position: relative;
             transition: all 0.3s ease;
             box-shadow: 0 1px 6px rgba(0,0,0,0.01);
-            color: var(--text);
-            opacity:0;
+            opacity: 0;
         }
 
             .spot.active {
-                border-color: var(--accent); /* blue highlight */
-                background: white; /* active white background */
+                border-color: var(--accent);
+                background: white;
                 box-shadow: 0 0 25px rgba(0, 122, 204, 0.5);
                 transform: scale(1.03);
-                color: black; /* active text color */
-                opacity:1;
+                color: black;
+                opacity: 1;
             }
 
         .spot-text {
@@ -96,7 +77,6 @@
         }
 
         .spot.active .spot-text {
-            color: black;
             font-size: 36px;
         }
 
@@ -105,79 +85,165 @@
             top: 8px;
             right: 12px;
             font-size: 16px;
-            /*color: #ff8c00;*/
             font-weight: bold;
         }
 
+        /* Lights animation */
+        .light {
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            background-color: white;
+            border-radius: 50%;
+            box-shadow: 0 0 25px 5px #f0f8ff;
+            opacity: 0.8;
+            top: 100vh;
+        }
 
-        
-@media (max-width: 1024px) {
-    .spots-container {
-        grid-template-columns: repeat(2, 1fr);
-        grid-auto-rows: minmax(160px, 1fr);
-        gap: 16px;
-    }
-    .spot-text {
-        font-size: 24px;
-    }
-    .spot.active .spot-text {
-        font-size: 30px;
-    }
-}
+        .x1 {
+            animation: floatUp 4s infinite linear;
+            transform: scale(1.0);
+            left: 5%;
+        }
 
-@media (max-width: 768px) {
-    .spots-container {
-        grid-template-columns: repeat(1, 1fr);
-        width: 95vw;
-        grid-auto-rows: minmax(140px, auto);
-        gap: 14px;
-    }
-    .spot-text {
-        font-size: 22px;
-    }
-    .spot.active .spot-text {
-        font-size: 26px;
-    }
-    header h1 {
-        font-size: 18px;
-    }
-}
+        .x2 {
+            animation: floatUp 7s infinite linear;
+            transform: scale(1.5);
+            left: 15%;
+        }
 
-@media (max-width: 480px) {
-    .spots-container {
-        grid-template-columns: 1fr;
-        width: 96vw;
-        gap: 12px;
-    }
-    .spot-text {
-        font-size: 20px;
-    }
-    .spot.active .spot-text {
-        font-size: 24px;
-    }
-    .countdown {
-        font-size: 14px;
-        top: 6px;
-        right: 10px;
-    }
-    header h1 {
-        font-size: 16px;
-    }
-}
+        .x3 {
+            animation: floatUp 2.5s infinite linear;
+            transform: scale(0.6);
+            left: 25%;
+        }
 
+        .x4 {
+            animation: floatUp 4.5s infinite linear;
+            transform: scale(1.2);
+            left: 35%;
+        }
 
+        .x5 {
+            animation: floatUp 8s infinite linear;
+            transform: scale(2.0);
+            left: 45%;
+        }
+
+        .x6 {
+            animation: floatUp 3s infinite linear;
+            transform: scale(0.8);
+            left: 55%;
+        }
+
+        .x7 {
+            animation: floatUp 5.3s infinite linear;
+            transform: scale(1.8);
+            left: 65%;
+        }
+
+        .x8 {
+            animation: floatUp 4.7s infinite linear;
+            transform: scale(1.3);
+            left: 75%;
+        }
+
+        .x9 {
+            animation: floatUp 4.1s infinite linear;
+            transform: scale(0.9);
+            left: 85%;
+        }
+
+        @keyframes floatUp {
+            0% {
+                top: 100vh;
+                opacity: 0;
+            }
+
+            25% {
+                opacity: 0.8;
+            }
+
+            50% {
+                top: 0vh;
+                opacity: 0.6;
+            }
+
+            75% {
+                opacity: 0.8;
+            }
+
+            100% {
+                top: -100vh;
+                opacity: 0;
+            }
+        }
+
+        @media (max-width:1024px) {
+            .spots-container {
+                grid-template-columns: repeat(2, 1fr);
+                grid-auto-rows: minmax(160px,1fr);
+                gap: 16px;
+            }
+
+            .spot-text {
+                font-size: 24px;
+            }
+
+            .spot.active .spot-text {
+                font-size: 30px;
+            }
+        }
+
+        @media (max-width:768px) {
+            .spots-container {
+                grid-template-columns: repeat(1,1fr);
+                width: 95vw;
+                grid-auto-rows: minmax(140px,auto);
+                gap: 14px;
+            }
+
+            .spot-text {
+                font-size: 22px;
+            }
+
+            .spot.active .spot-text {
+                font-size: 26px;
+            }
+
+            header h1 {
+                font-size: 18px;
+            }
+        }
+
+        @media (max-width:480px) {
+            .spots-container {
+                grid-template-columns: 1fr;
+                width: 96vw;
+                gap: 12px;
+            }
+
+            .spot-text {
+                font-size: 20px;
+            }
+
+            .spot.active .spot-text {
+                font-size: 24px;
+            }
+
+            .countdown {
+                font-size: 14px;
+                top: 6px;
+                right: 10px;
+            }
+
+            header h1 {
+                font-size: 16px;
+            }
+        }
     </style>
-
-
-
-
-
-
-
 </head>
 <body>
-
-
     <header>
         <h1>TV Display (Live)</h1>
     </header>
@@ -192,104 +258,7 @@
         <div class='light x7'></div>
         <div class='light x8'></div>
         <div class='light x9'></div>
-        <style>
-            html, body {
-                overflow: hidden; /* prevent scrollbars */
-                position: relative
-            }
-            .light {
-                position: absolute;
-                width: 12px; /* small circle */
-                height: 12px;
-                background-color: white;
-                border-radius: 50%; /* make it a circle */
-                box-shadow: 0 0 25px 5px #f0f8ff; /* glow effect */
-                opacity: 0.8; /* visible but soft */
-                top: 100vh;
-                margin: auto;
-            }
 
-            /* positions and animation speeds */
-            .x1 {
-                animation: floatUp 4s infinite linear;
-                transform: scale(1.0);
-                left: 5%;
-            }
-
-            .x2 {
-                animation: floatUp 7s infinite linear;
-                transform: scale(1.5);
-                left: 15%;
-            }
-
-            .x3 {
-                animation: floatUp 2.5s infinite linear;
-                transform: scale(0.6);
-                left: 25%;
-            }
-
-            .x4 {
-                animation: floatUp 4.5s infinite linear;
-                transform: scale(1.2);
-                left: 35%;
-            }
-
-            .x5 {
-                animation: floatUp 8s infinite linear;
-                transform: scale(2.0);
-                left: 45%;
-            }
-
-            .x6 {
-                animation: floatUp 3s infinite linear;
-                transform: scale(0.8);
-                left: 55%;
-            }
-
-            .x7 {
-                animation: floatUp 5.3s infinite linear;
-                transform: scale(1.8);
-                left: 65%;
-            }
-
-            .x8 {
-                animation: floatUp 4.7s infinite linear;
-                transform: scale(1.3);
-                left: 75%;
-            }
-
-            .x9 {
-                animation: floatUp 4.1s infinite linear;
-                transform: scale(0.9);
-                left: 85%;
-            }
-
-            @keyframes floatUp {
-                0% {
-                    top: 100vh;
-                    opacity: 0;
-                }
-
-                25% {
-                    opacity: 0.8;
-                }
-
-                50% {
-                    top: 0vh;
-                    opacity: 0.6;
-                }
-
-                75% {
-                    opacity: 0.8;
-                }
-
-                100% {
-                    top: -100vh;
-                    opacity: 0;
-                }
-            }
-
-        </style>
         <div class="spots-container" id="spotsContainer"></div>
     </main>
 
@@ -302,14 +271,10 @@
         for (let i = 0; i < SPOT_COUNT; i++) {
             const el = document.createElement('div');
             el.className = 'spot';
-            el.innerHTML = `
-                        <div class="spot-text">Spot ${i + 1}</div>
-                        <div class="countdown"></div>
-                    `;
+            el.innerHTML = `<div class="spot-text">Spot ${i + 1}</div><div class="countdown"></div>`;
             spotsContainer.appendChild(el);
         }
 
-        // Clear active timers for a spot
         function clearActive(spotIndex) {
             const a = active[spotIndex];
             if (!a) return;
@@ -319,21 +284,20 @@
             const el = spotsContainer.children[spotIndex];
             if (el) {
                 el.querySelector('.countdown').textContent = '';
-                el.classList.remove('active'); // remove highlight
+                el.querySelector('.spot-text').style.color = '';
+                el.classList.remove('active');
             }
         }
 
-        // Start showing a message locally
         function startLocalShow(spotIndex, message) {
             clearActive(spotIndex);
             const el = spotsContainer.children[spotIndex];
             const textNode = el.querySelector('.spot-text');
             const cdNode = el.querySelector('.countdown');
 
-            // Add highlight
             el.classList.add('active');
-
             textNode.innerText = message.text;
+            textNode.style.color = message.textColor || 'black';
 
             let remaining = Number(message.duration) || 10;
             cdNode.innerText = remaining + 's';
@@ -344,27 +308,18 @@
             }, 1000);
 
             const timeoutId = setTimeout(async () => {
-                try {
-                    await fetch(`/queue/${message.id}/completed`, { method: 'POST' });
-                } catch (e) { console.error(e); }
-                finally {
-                    clearActive(spotIndex);
-                    await pollAndStartForSpot(spotIndex);
-                }
+                try { await fetch(`/queue/${message.id}/completed`, { method: 'POST' }); }
+                catch (e) { console.error(e); }
+                finally { clearActive(spotIndex); await pollAndStartForSpot(spotIndex); }
             }, remaining * 1000);
 
             active[spotIndex] = { id: message.id, remaining, intervalId, timeoutId };
         }
 
-        // Pick server message for a spot and start showing
         async function pollAndStartForSpot(spotIndex, qArg) {
             const q = qArg || await (await fetch('/queue')).json();
-
             const showing = q.find(it => it.spotIndex === spotIndex && it.status === 'showing');
-            if (showing) {
-                startLocalShow(spotIndex, showing);
-                return;
-            }
+            if (showing) { startLocalShow(spotIndex, showing); return; }
 
             const approved = q.find(it => it.spotIndex === spotIndex && it.status === 'approved');
             if (approved) {
@@ -376,14 +331,12 @@
                 return;
             }
 
-            // No message -> reset spot display
             const el = spotsContainer.children[spotIndex];
             el.classList.remove('active');
             el.querySelector('.spot-text').innerText = `Spot ${spotIndex + 1}`;
             el.querySelector('.countdown').innerText = '';
         }
 
-        // Poll server for all spots
         async function pollQueue() {
             const q = await (await fetch('/queue')).json();
             for (let i = 0; i < SPOT_COUNT; i++) {
@@ -397,10 +350,8 @@
             }
         }
 
-        // Start polling
         setInterval(pollQueue, 2000);
         pollQueue();
     </script>
-
 </body>
 </html>
