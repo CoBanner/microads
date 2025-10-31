@@ -1,4 +1,4 @@
-const express = require('express');
+﻿const express = require('express');
 const app = express();
 const path = require('path');
 
@@ -6,30 +6,75 @@ app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
 let nextId = 0;
-let queue = []; // { id, spotIndex, text, duration, status: 'pending'|'approved'|'showing'|'completed' }
+let queue = [];
+// Message object: { id, spotIndex, text, duration, textColor, special, status: 'pending'|'approved'|'showing'|'completed' }
 
-// --- Queue APIs ---
+// -----------------------------
+//        Queue APIs
+// -----------------------------
 
 // Get all messages
 app.get('/queue', (req, res) => {
     res.json(queue);
 });
 
-// Create a new message
+// Create a new message (with full validation)
 app.post('/queue', (req, res) => {
-    const { spotIndex, text, duration } = req.body;
-    if (spotIndex == null || !text) return res.status(400).json({ error: 'Missing spotIndex or text' });
+    const { spotIndex, text, duration, special, textColor } = req.body;
 
+    const ALLOWED_DURATIONS = [10, 30, 60];  // allowed display durations in seconds
+    const MAX_MESSAGE_LENGTH = 200;          // max characters
+    const ALLOWED_SPECIAL_FLAGS = [true, false];
+    const ALLOWED_COLORS = [
+        '#000000', // black
+        '#ff0000', // red
+        '#00ff00', // green
+        '#0000ff', // blue
+        '#ffcc00', // yellow
+        '#ff00ff'  // magenta
+    ]; // only 6 bright colors (no white)
+
+    // Required field validation
+    if (spotIndex == null || !text) {
+        return res.status(400).json({ error: 'Missing spotIndex or text' });
+    }
+
+    // Message length validation
+    if (text.length === 0 || text.length > MAX_MESSAGE_LENGTH) {
+        return res.status(400).json({ error: `Message length must be 1–${MAX_MESSAGE_LENGTH} characters` });
+    }
+
+    // Duration validation
+    const dur = Number(duration);
+    if (!ALLOWED_DURATIONS.includes(dur)) {
+        return res.status(400).json({ error: 'Invalid duration value' });
+    }
+
+    // Special flag validation
+    if (!ALLOWED_SPECIAL_FLAGS.includes(!!special)) {
+        return res.status(400).json({ error: 'Invalid special flag' });
+    }
+
+    // Text color validation (required and must be in allowed list)
+    if (!textColor || !ALLOWED_COLORS.includes(textColor)) {
+        return res.status(400).json({ error: 'Invalid text color. Allowed colors: ' + ALLOWED_COLORS.join(', ') });
+    }
+
+    // Passed all validations
     const msg = {
         id: nextId++,
         spotIndex,
         text,
-        duration: Number(duration) || 10,
+        duration: dur,
+        textColor, // use the validated color
+        special: !!special,
         status: 'pending'
     };
+
     queue.push(msg);
     res.json({ success: true, msg });
 });
+
 
 // Approve a message
 app.post('/queue/:id/approve', (req, res) => {
@@ -63,10 +108,16 @@ app.post('/queue/:id/completed', (req, res) => {
     msg.status = 'completed';
     res.json({ success: true });
 });
-// Reset system (clear all messages)
+
+// Reset queue (admin utility)
 app.delete('/queue', (req, res) => {
     queue = [];
     res.json({ ok: true });
 });
 
-app.listen(3000, () => console.log('Server running on http://localhost:3000'));
+// -----------------------------
+//        Server Startup
+// -----------------------------
+app.listen(3000, () => {
+    console.log(' Server running on http://localhost:3000');
+});
