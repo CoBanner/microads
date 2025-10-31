@@ -6,17 +6,40 @@
     <title>TV Display</title>
     <style>
         :root {
-            --bg: #0b0b0b;
-            --card: #111;
-            --accent: #00e5ff;
-            --text: #fff;
+            --bg-start: #e0e0e0;
+            --bg-mid: #f9f9f9;
+            --bg-end: #d0d0d0;
+            --card-inactive: rgba(200, 200, 200, 0.1); /* very subtle gray */
+            --card-active: rgba(0, 122, 204, 0.2); /* blueish highlight */
+            --accent: #007acc;
+            --text: #111;
         }
 
+ 
         body {
             margin: 0;
             font-family: Arial, sans-serif;
-            background: var(--bg);
             color: var(--text);
+            overflow: hidden;
+            height: 100vh;
+            /* Full-height background image */
+            background: url('lebg.jpg') center center / cover no-repeat;
+            /* Optional gradient overlay on top */
+            /* background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(200,200,200,0.1)), url('lebg.jpg') center center / cover no-repeat; */
+        }
+
+        @keyframes gradientBG {
+            0% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+
+            100% {
+                background-position: 0% 50%;
+            }
         }
 
         header {
@@ -27,73 +50,251 @@
         h1 {
             margin: 0;
             font-size: 20px;
+            color: var(--text);
         }
 
         .spots-container {
-            width: 95vw;
+            width: 90vw;
             max-width: 1400px;
-            margin: 16px auto;
+            margin: 20px auto;
             display: grid;
-            grid-template-columns: repeat(6, 200px);
-            grid-auto-rows: 100px;
-            gap: 16px;
-            justify-content: center;
+            grid-template-columns: repeat(3, 1fr);
+            grid-auto-rows: minmax(200px, 1fr);
+            gap: 20px;
         }
 
         .spot {
-            background: var(--card);
-            border-radius: 10px;
-            border: 2px solid rgba(255,255,255,0.04);
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            background: var(--card-inactive); /* subtle gray for inactive */
+            border-radius: 15px;
             display: flex;
-            flex-direction: column;
             align-items: center;
             justify-content: center;
             position: relative;
-            overflow: hidden;
             transition: all 0.3s ease;
+            box-shadow: 0 1px 6px rgba(0,0,0,0.01);
+            color: var(--text);
+            opacity:0;
         }
 
             .spot.active {
-                border-color: var(--accent);
-                background: rgba(0, 229, 255, 0.1);
-                transform: scale(1.05);
-                box-shadow: 0 0 10px var(--accent);
+                border-color: var(--accent); /* blue highlight */
+                background: white; /* active white background */
+                box-shadow: 0 0 25px rgba(0, 122, 204, 0.5);
+                transform: scale(1.03);
+                color: black; /* active text color */
+                opacity:1;
             }
 
         .spot-text {
             font-weight: 700;
             text-align: center;
-            padding: 0 8px;
-            font-size: 14px;
+            padding: 0 12px;
+            font-size: 28px;
+            color: #e2e2e2;
             transition: font-size 0.3s ease, color 0.3s ease;
         }
 
         .spot.active .spot-text {
-            font-size: 18px;
-            color: #00e5ff;
+            color: black;
+            font-size: 36px;
         }
 
         .countdown {
             position: absolute;
-            top: 6px;
-            right: 8px;
-            font-size: 12px;
-            color: yellow;
+            top: 8px;
+            right: 12px;
+            font-size: 16px;
+            /*color: #ff8c00;*/
+            font-weight: bold;
         }
+
+
+        
+@media (max-width: 1024px) {
+    .spots-container {
+        grid-template-columns: repeat(2, 1fr);
+        grid-auto-rows: minmax(160px, 1fr);
+        gap: 16px;
+    }
+    .spot-text {
+        font-size: 24px;
+    }
+    .spot.active .spot-text {
+        font-size: 30px;
+    }
+}
+
+@media (max-width: 768px) {
+    .spots-container {
+        grid-template-columns: repeat(1, 1fr);
+        width: 95vw;
+        grid-auto-rows: minmax(140px, auto);
+        gap: 14px;
+    }
+    .spot-text {
+        font-size: 22px;
+    }
+    .spot.active .spot-text {
+        font-size: 26px;
+    }
+    header h1 {
+        font-size: 18px;
+    }
+}
+
+@media (max-width: 480px) {
+    .spots-container {
+        grid-template-columns: 1fr;
+        width: 96vw;
+        gap: 12px;
+    }
+    .spot-text {
+        font-size: 20px;
+    }
+    .spot.active .spot-text {
+        font-size: 24px;
+    }
+    .countdown {
+        font-size: 14px;
+        top: 6px;
+        right: 10px;
+    }
+    header h1 {
+        font-size: 16px;
+    }
+}
+
+
     </style>
+
+
+
+
+
+
+
 </head>
 <body>
+
 
     <header>
         <h1>TV Display (Live)</h1>
     </header>
 
     <main>
+        <div class='light x1'></div>
+        <div class='light x2'></div>
+        <div class='light x3'></div>
+        <div class='light x4'></div>
+        <div class='light x5'></div>
+        <div class='light x6'></div>
+        <div class='light x7'></div>
+        <div class='light x8'></div>
+        <div class='light x9'></div>
+        <style>
+            html, body {
+                overflow: hidden; /* prevent scrollbars */
+                position: relative
+            }
+            .light {
+                position: absolute;
+                width: 12px; /* small circle */
+                height: 12px;
+                background-color: white;
+                border-radius: 50%; /* make it a circle */
+                box-shadow: 0 0 25px 5px #f0f8ff; /* glow effect */
+                opacity: 0.8; /* visible but soft */
+                top: 100vh;
+                margin: auto;
+            }
+
+            /* positions and animation speeds */
+            .x1 {
+                animation: floatUp 4s infinite linear;
+                transform: scale(1.0);
+                left: 5%;
+            }
+
+            .x2 {
+                animation: floatUp 7s infinite linear;
+                transform: scale(1.5);
+                left: 15%;
+            }
+
+            .x3 {
+                animation: floatUp 2.5s infinite linear;
+                transform: scale(0.6);
+                left: 25%;
+            }
+
+            .x4 {
+                animation: floatUp 4.5s infinite linear;
+                transform: scale(1.2);
+                left: 35%;
+            }
+
+            .x5 {
+                animation: floatUp 8s infinite linear;
+                transform: scale(2.0);
+                left: 45%;
+            }
+
+            .x6 {
+                animation: floatUp 3s infinite linear;
+                transform: scale(0.8);
+                left: 55%;
+            }
+
+            .x7 {
+                animation: floatUp 5.3s infinite linear;
+                transform: scale(1.8);
+                left: 65%;
+            }
+
+            .x8 {
+                animation: floatUp 4.7s infinite linear;
+                transform: scale(1.3);
+                left: 75%;
+            }
+
+            .x9 {
+                animation: floatUp 4.1s infinite linear;
+                transform: scale(0.9);
+                left: 85%;
+            }
+
+            @keyframes floatUp {
+                0% {
+                    top: 100vh;
+                    opacity: 0;
+                }
+
+                25% {
+                    opacity: 0.8;
+                }
+
+                50% {
+                    top: 0vh;
+                    opacity: 0.6;
+                }
+
+                75% {
+                    opacity: 0.8;
+                }
+
+                100% {
+                    top: -100vh;
+                    opacity: 0;
+                }
+            }
+
+        </style>
         <div class="spots-container" id="spotsContainer"></div>
     </main>
 
     <script>
-        const SPOT_COUNT = 36;
+        const SPOT_COUNT = 9;
         const spotsContainer = document.getElementById('spotsContainer');
         let active = {}; // active[spotIndex] = { id, remaining, intervalId, timeoutId }
 
@@ -102,9 +303,9 @@
             const el = document.createElement('div');
             el.className = 'spot';
             el.innerHTML = `
-                    <div class="spot-text">Spot ${i + 1}</div>
-                    <div class="countdown"></div>
-                `;
+                        <div class="spot-text">Spot ${i + 1}</div>
+                        <div class="countdown"></div>
+                    `;
             spotsContainer.appendChild(el);
         }
 
