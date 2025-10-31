@@ -56,6 +56,9 @@
             transition: all 0.3s ease;
             box-shadow: 0 1px 6px rgba(0,0,0,0.01);
             opacity: 0;
+
+            width:100%;
+            max-width:33%;
         }
 
             .spot.active {
@@ -74,10 +77,18 @@
             font-size: 28px;
             color: #e2e2e2;
             transition: font-size 0.3s ease, color 0.3s ease;
+            display: -webkit-box;
+            -webkit-line-clamp: 2; /* MAX 2 lines */
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            word-break: break-word;
+            white-space: normal;
+            width: 100%; /* fit box width */
+            box-sizing: border-box;
         }
 
         .spot.active .spot-text {
-            font-size: 36px;
+            font-size: 46px;
         }
 
         .countdown {
