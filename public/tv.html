@@ -25,14 +25,20 @@
         }
 
         header {
-            padding: 14px;
-            text-align: center;
+            display: block;
+            text-align: left;
+            max-width: 220px;
+            background: white;
+            border-bottom-right-radius: 60px;
+            opacity: 0.85;
+            padding: 8px 12px;
         }
 
-        h1 {
-            margin: 0;
-            font-size: 20px;
-            color: var(--text);
+        .powered-inline {
+            font-size: 16px;
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
         }
 
         .spots-container {
@@ -43,6 +49,7 @@
             grid-template-columns: repeat(3, 1fr);
             grid-auto-rows: minmax(200px, 1fr);
             gap: 20px;
+            grid-auto-rows: 200px;
         }
 
         .spot {
@@ -56,8 +63,7 @@
             transition: all 0.3s ease;
             box-shadow: 0 1px 6px rgba(0,0,0,0.01);
             opacity: 0;
-
-            width:100%;
+            width: 100%;
         }
 
             .spot.active {
@@ -77,17 +83,23 @@
             color: #e2e2e2;
             transition: font-size 0.3s ease, color 0.3s ease;
             display: -webkit-box;
-            -webkit-line-clamp: 2; /* MAX 2 lines */
+            -webkit-line-clamp: 4; /* max lines */
             -webkit-box-orient: vertical;
             overflow: hidden;
             word-break: break-word;
             white-space: normal;
-            width: 100%; /* fit box width */
-            box-sizing: border-box;
-        }
+            width: 100%;
 
-        .spot.active .spot-text {
-            font-size: 46px;
+
+            box-sizing: border-box;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-height: 100%; /* stay within box */
+            line-height: 1.1; /* compact spacing */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
         }
 
         .countdown {
@@ -98,7 +110,47 @@
             font-weight: bold;
         }
 
-        /* Lights animation */
+        /* FONT SIZE CLASSES */
+        .text-xl {
+            font-size: 90px;
+        }
+        /* was 138px */
+        .text-lg {
+            font-size: 86px;
+        }
+        /* was 98px */
+        .text-md {
+            font-size: 52px;
+        }
+        /* was 84px */
+        .text-sm {
+            font-size: 38px;
+        }
+        /* was 28px */
+
+
+        /* COLOR CLASSES */
+        .color-black {
+            color: black;
+        }
+
+        .color-red {
+            color: #e53935;
+        }
+
+        .color-blue {
+            color: #1e88e5;
+        }
+
+        .color-green {
+            color: #43a047;
+        }
+
+        .color-yellow {
+            color: #fdd835;
+        }
+
+        /* LIGHTS ANIMATION */
         .light {
             position: absolute;
             width: 12px;
@@ -108,60 +160,6 @@
             box-shadow: 0 0 25px 5px #f0f8ff;
             opacity: 0.8;
             top: 100vh;
-        }
-
-        .x1 {
-            animation: floatUp 4s infinite linear;
-            transform: scale(1.0);
-            left: 5%;
-        }
-
-        .x2 {
-            animation: floatUp 7s infinite linear;
-            transform: scale(1.5);
-            left: 15%;
-        }
-
-        .x3 {
-            animation: floatUp 2.5s infinite linear;
-            transform: scale(0.6);
-            left: 25%;
-        }
-
-        .x4 {
-            animation: floatUp 4.5s infinite linear;
-            transform: scale(1.2);
-            left: 35%;
-        }
-
-        .x5 {
-            animation: floatUp 8s infinite linear;
-            transform: scale(2.0);
-            left: 45%;
-        }
-
-        .x6 {
-            animation: floatUp 3s infinite linear;
-            transform: scale(0.8);
-            left: 55%;
-        }
-
-        .x7 {
-            animation: floatUp 5.3s infinite linear;
-            transform: scale(1.8);
-            left: 65%;
-        }
-
-        .x8 {
-            animation: floatUp 4.7s infinite linear;
-            transform: scale(1.3);
-            left: 75%;
-        }
-
-        .x9 {
-            animation: floatUp 4.1s infinite linear;
-            transform: scale(0.9);
-            left: 85%;
         }
 
         @keyframes floatUp {
@@ -189,40 +187,73 @@
             }
         }
 
+        .x1 {
+            animation: floatUp 4s infinite linear;
+            left: 5%;
+            transform: scale(1.0);
+        }
+
+        .x2 {
+            animation: floatUp 7s infinite linear;
+            left: 15%;
+            transform: scale(1.5);
+        }
+
+        .x3 {
+            animation: floatUp 2.5s infinite linear;
+            left: 25%;
+            transform: scale(0.6);
+        }
+
+        .x4 {
+            animation: floatUp 4.5s infinite linear;
+            left: 35%;
+            transform: scale(1.2);
+        }
+
+        .x5 {
+            animation: floatUp 8s infinite linear;
+            left: 45%;
+            transform: scale(2.0);
+        }
+
+        .x6 {
+            animation: floatUp 3s infinite linear;
+            left: 55%;
+            transform: scale(0.8);
+        }
+
+        .x7 {
+            animation: floatUp 5.3s infinite linear;
+            left: 65%;
+            transform: scale(1.8);
+        }
+
+        .x8 {
+            animation: floatUp 4.7s infinite linear;
+            left: 75%;
+            transform: scale(1.3);
+        }
+
+        .x9 {
+            animation: floatUp 4.1s infinite linear;
+            left: 85%;
+            transform: scale(0.9);
+        }
+
+        /* Responsive */
         @media (max-width:1024px) {
             .spots-container {
                 grid-template-columns: repeat(2, 1fr);
                 grid-auto-rows: minmax(160px,1fr);
                 gap: 16px;
             }
-
-            .spot-text {
-                font-size: 24px;
-            }
-
-            .spot.active .spot-text {
-                font-size: 30px;
-            }
         }
 
         @media (max-width:768px) {
             .spots-container {
-                grid-template-columns: repeat(1,1fr);
                 width: 95vw;
-                grid-auto-rows: minmax(140px,auto);
-                gap: 14px;
-            }
-
-            .spot-text {
-                font-size: 22px;
-            }
-
-            .spot.active .spot-text {
-                font-size: 26px;
-            }
-
-            header h1 {
-                font-size: 18px;
+                gap: 24px;
             }
         }
 
@@ -232,30 +263,13 @@
                 width: 96vw;
                 gap: 12px;
             }
-
-            .spot-text {
-                font-size: 20px;
-            }
-
-            .spot.active .spot-text {
-                font-size: 24px;
-            }
-
-            .countdown {
-                font-size: 14px;
-                top: 6px;
-                right: 10px;
-            }
-
-            header h1 {
-                font-size: 16px;
-            }
         }
     </style>
 </head>
 <body>
     <header>
-        <h1>TV Display (Live)</h1>
+        <span class="powered-inline">Powered by</span>
+        <img src="cobanner-logo.png" alt="CoBanner Logo" style="max-width:100%;height:auto;">
     </header>
 
     <main>
@@ -275,9 +289,8 @@
     <script>
         const SPOT_COUNT = 9;
         const spotsContainer = document.getElementById('spotsContainer');
-        let active = {}; // active[spotIndex] = { id, remaining, intervalId, timeoutId }
+        let active = {};
 
-        // Initialize grid
         for (let i = 0; i < SPOT_COUNT; i++) {
             const el = document.createElement('div');
             el.className = 'spot';
@@ -288,14 +301,38 @@
         function clearActive(spotIndex) {
             const a = active[spotIndex];
             if (!a) return;
-            if (a.intervalId) clearInterval(a.intervalId);
-            if (a.timeoutId) clearTimeout(a.timeoutId);
+            clearInterval(a.intervalId);
+            clearTimeout(a.timeoutId);
             delete active[spotIndex];
+
             const el = spotsContainer.children[spotIndex];
-            if (el) {
-                el.querySelector('.countdown').textContent = '';
-                el.querySelector('.spot-text').style.color = '';
-                el.classList.remove('active');
+            const textNode = el.querySelector('.spot-text');
+            el.querySelector('.countdown').textContent = '';
+            el.classList.remove('active');
+
+            // Remove style classes
+            textNode.classList.remove('text-xl', 'text-lg', 'text-md', 'text-sm');
+            textNode.classList.remove('color-black', 'color-red', 'color-blue', 'color-green', 'color-yellow');
+
+            textNode.innerText = `Spot ${spotIndex + 1}`;
+        }
+
+        function applyFontClass(textNode, len) {
+            textNode.classList.remove('text-xl', 'text-lg', 'text-md', 'text-sm');
+            if (len <= 10) textNode.classList.add('text-xl');
+            else if (len <= 20) textNode.classList.add('text-lg');
+            else if (len <= 30) textNode.classList.add('text-md');
+            else textNode.classList.add('text-sm');
+        }
+
+        function applyColorClass(textNode, colorName) {
+            textNode.classList.remove('color-black', 'color-red', 'color-blue', 'color-green', 'color-yellow');
+            switch (colorName?.toLowerCase()) {
+                case 'red': textNode.classList.add('color-red'); break;
+                case 'blue': textNode.classList.add('color-blue'); break;
+                case 'green': textNode.classList.add('color-green'); break;
+                case 'yellow': textNode.classList.add('color-yellow'); break;
+                default: textNode.classList.add('color-black');
             }
         }
 
@@ -307,7 +344,9 @@
 
             el.classList.add('active');
             textNode.innerText = message.text;
-            textNode.style.color = message.textColor || 'black';
+
+            applyFontClass(textNode, message.text.length);
+            applyColorClass(textNode, message.textColor);
 
             let remaining = Number(message.duration) || 10;
             cdNode.innerText = remaining + 's';
@@ -341,10 +380,7 @@
                 return;
             }
 
-            const el = spotsContainer.children[spotIndex];
-            el.classList.remove('active');
-            el.querySelector('.spot-text').innerText = `Spot ${spotIndex + 1}`;
-            el.querySelector('.countdown').innerText = '';
+            clearActive(spotIndex);
         }
 
         async function pollQueue() {

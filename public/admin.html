@@ -6,7 +6,7 @@
     <title>Panou Admin</title>
     <style>
         body {
-            background: #111;
+            background: linear-gradient(120deg, #ff8a1b, #f4b510);
             color: white;
             font-family: Arial, sans-serif;
             padding: 20px;
@@ -53,7 +53,7 @@
         }
 
         #loginBox {
-            background: #222;
+            background: #fff;
             padding: 30px;
             border-radius: 8px;
             box-shadow: 0 0 10px rgba(0, 255, 255, 0.2);
@@ -65,20 +65,21 @@
         }
         div#loginBox h2 {
            font-size: 28px;
+           color: #222;
         }
 
             #loginBox input {
                 padding: 8px;
                 border: 1px solid #555;
                 border-radius: 4px;
-                background: #111;
-                color: white;
+                background: #262525;
+                color: #fff;
                 font-size: 16px;
             }
 
             #loginBox button {
                 padding: 8px;
-                background: cyan;
+                background: #ff8b1b;
                 color: #111;
                 border: none;
                 border-radius: 4px;
@@ -116,6 +117,68 @@
                 .controls button:hover {
                     background: #d11a2a;
                 }
+
+
+                    @media (max-width: 600px) {
+            body {
+                padding: 10px;
+            }
+
+            h1 {
+                font-size: 22px;
+                text-align: center;
+            }
+
+            #loginBox {
+                width: 100%;
+                height: auto;
+                padding: 20px;
+            }
+
+            #loginBox input, #loginBox button {
+                font-size: 14px;
+                padding: 10px;
+            }
+
+            .controls {
+                justify-content: center;
+            }
+
+            .queue-item {
+                flex-direction: column;
+                text-align: left;
+                padding: 12px;
+            }
+
+            .queue-item button {
+                width: 100%;
+                margin-left: 0;
+            }
+
+            .queue-item .status-label {
+                display: block;
+                margin: 5px 0 0 0;
+            }
+        }
+                     @media (max-width: 1024px) {
+            body {
+                padding: 15px;
+            }
+
+            #loginBox {
+                width: 80%;
+                height: auto;
+            }
+
+            .queue-item {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .queue-item button {
+                width: 100%;
+            }
+        }
     </style>
 </head>
 <body>
